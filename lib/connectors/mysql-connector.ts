@@ -70,7 +70,7 @@ export class MySQLConnector implements Connector {
     await this._makeConnection();
 
     const queryClient = client ?? this._client;
-    const query = this._translator.translateToQuery(queryDescription).replace(/WHERE (.+) = NULL/g, ' IS NULL');
+    const query = this._translator.translateToQuery(queryDescription).replace(/WHERE (.+) = NULL/g, 'WHERE $1 IS NULL');
     const subqueries = query.split(/;(?=(?:[^'"]|'[^']*'|"[^"]*")*$)/);
     const queryMethod = query.toLowerCase().startsWith("select")
       ? "query"
