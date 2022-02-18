@@ -75,6 +75,7 @@ export class MongoDBConnector implements Connector {
     if (queryDescription.wheres) {
       for (const whereClause of queryDescription.wheres) {
         if (whereClause.field === "_id") {
+          // @ts-expect-error: PLS DON'T
           whereClause.value = new Bson.ObjectId(whereClause.value);
         }
       }
@@ -149,6 +150,7 @@ export class MongoDBConnector implements Connector {
 
           if (queryDescription.whereIn.field === "_id") {
             queryDescription.whereIn.possibleValues = queryDescription.whereIn.possibleValues.map(
+              // @ts-expect-error: PLS DON'T
               (value) => new Bson.ObjectId(value)
             );
           }
