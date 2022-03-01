@@ -79,7 +79,7 @@ export class MySQLConnector implements Connector {
 
     for (let i = 0; i < subqueries.length; i++) {
       const result = await queryClient[queryMethod](subqueries[i]);
-      await this.close();
+      await this.reconnect();
 //       let result = null;
 //       try {
 //         result = await queryClient[queryMethod](subqueries[i]);
