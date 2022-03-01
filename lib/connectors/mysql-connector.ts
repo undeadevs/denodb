@@ -77,6 +77,7 @@ export class MySQLConnector implements Connector {
       : "execute";
 
     for (let i = 0; i < subqueries.length; i++) {
+      let result = null;
       try {
         result = await queryClient[queryMethod](subqueries[i]);
       } catch (error) {
