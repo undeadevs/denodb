@@ -78,18 +78,20 @@ export class MySQLConnector implements Connector {
       : "execute";
 
     for (let i = 0; i < subqueries.length; i++) {
-      let result = null;
-      try {
-        result = await queryClient[queryMethod](subqueries[i]);
-      } catch (error) {
-        //reconnect client on timeout error
-        if (error instanceof MySQLReponseTimeoutError) {
-          await this.reconnect();
-          return this.query(queryDescription, client);
-        }
+      const result = await queryClient[queryMethod](subqueries[i]);
+      await this.close();
+//       let result = null;
+//       try {
+//         result = await queryClient[queryMethod](subqueries[i]);
+//       } catch (error) {
+//         //reconnect client on timeout error
+//         if (error instanceof MySQLReponseTimeoutError) {
+//           await this.reconnect();
+//           return this.query(queryDescription, client);
+//         }
 
-        throw error;
-      }
+//         throw error;
+//       }
       
       if (i === subqueries.length - 1) {
         return result;
