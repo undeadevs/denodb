@@ -4,6 +4,7 @@ import type { Connector, ConnectorOptions } from "./connector.ts";
 import { SQLTranslator } from "../translators/sql-translator.ts";
 import type { SupportedSQLDatabaseDialect } from "../translators/sql-translator.ts";
 import type { QueryDescription } from "../query-builder.ts";
+import { warning } from "../helpers/log.ts";
 
 export interface MySQLOptions extends ConnectorOptions {
   database: string;
