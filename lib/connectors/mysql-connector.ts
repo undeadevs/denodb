@@ -1,4 +1,4 @@
-import { configMySQLLogger, MySQLClient, MySQLConnection } from "../../deps.ts";
+import { configMySQLLogger, MySQLClient, MySQLConnection, MySQLReponseTimeoutError } from "../../deps.ts";
 import type { LoggerConfig } from "../../deps.ts";
 import type { Connector, ConnectorOptions } from "./connector.ts";
 import { SQLTranslator } from "../translators/sql-translator.ts";
@@ -77,8 +77,18 @@ export class MySQLConnector implements Connector {
       : "execute";
 
     for (let i = 0; i < subqueries.length; i++) {
-      const result = await queryClient[queryMethod](subqueries[i]);
+      try {
+        result = await queryClient[queryMethod](subqueries[i]);
+      } catch (error) {
+        //reconnect client on timeout error
+        if (error instanceof MySQLReponseTimeoutError) {
+          await this.reconnect();
+          return this.query(queryDescription, client);
+        }
 
+        throw error;
+      }
+      
       if (i === subqueries.length - 1) {
         return result;
       }
@@ -87,6 +97,15 @@ export class MySQLConnector implements Connector {
 
   transaction(queries: () => Promise<void>) {
     return this._client.transaction(queries);
+  }
+  
+  /**
+   * Reconnect current client connection
+   */
+  async reconnect() {
+    warning("Client reconnection has been triggered.");
+    await this.close();
+    return this._makeConnection();
   }
 
   async close() {
