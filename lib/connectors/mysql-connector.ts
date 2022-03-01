@@ -84,7 +84,7 @@ export class MySQLConnector implements Connector {
         result = await queryClient[queryMethod](subqueries[i]);
       } catch (error) {
         //reconnect client on timeout error
-        if (error instanceof MySQLReponseTimeoutError) {
+        if (error.message.includes('Connection reset by peer')) {
           await this.close();
           return this.query(queryDescription, client);
         }
